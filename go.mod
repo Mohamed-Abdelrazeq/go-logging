@@ -1,3 +1,3 @@
-module MohamedAbdelrazeq/go-payment
+module MohamedAbdelrazeq/go-logging
 
 go 1.23.2
