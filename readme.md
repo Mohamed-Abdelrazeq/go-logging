@@ -8,13 +8,16 @@ This is the README file for the Logging Service. This service provides endpoints
 
 - **URL:** `/logs`
 - **Method:** `POST`
-- **Description:** Create a new log entry.
+- The record has 3 levels:
+    - **Level 1:** Info
+    - **Level 2:** Warning
+    - **Level 3:** Errors
 - **Request Body:**
     ```json
     {
-        "level": "info",
+        "level": 1,
         "message": "This is a log message",
-        "timestamp": "2023-10-01T12:00:00Z"
+        "timestamp": 2023-10-01T12:00:00Z
     }
     ```
 - **Response:**
@@ -31,9 +34,9 @@ This is the README file for the Logging Service. This service provides endpoints
     [
         {
             "id": "1",
-            "level": "info",
+            "level": 1,
             "message": "This is a log message",
-            "timestamp": "2023-10-01T12:00:00Z"
+            "timestamp": 2023-10-01T12:00:00Z
         },
         ...
     ]
@@ -50,9 +53,9 @@ This is the README file for the Logging Service. This service provides endpoints
     ```json
     {
         "id": "1",
-        "level": "info",
+        "level": 1,
         "message": "This is a log message",
-        "timestamp": "2023-10-01T12:00:00Z"
+        "timestamp": 2023-10-01T12:00:00Z
     }
     ```
 - **Response Codes:**
@@ -72,9 +75,9 @@ This is the README file for the Logging Service. This service provides endpoints
     [
         {
             "id": "1",
-            "level": "info",
+            "level": 1,
             "message": "This is a log message",
-            "timestamp": "2023-10-01T12:00:00Z"
+            "timestamp": 2023-10-01T12:00:00Z
         },
         ...
     ]
