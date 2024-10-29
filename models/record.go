@@ -16,6 +16,7 @@ const (
 )
 
 type LogRecord struct {
+	ID        int       `json:"id"`
 	Level     Level     `json:"level"`
 	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`

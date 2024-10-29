@@ -26,6 +26,9 @@ func main() {
 
 	http.HandleFunc("/health", handlers.HandleHealth)
 	http.HandleFunc("/create-record", loggerHandler.CreateLogRecord)
+	http.HandleFunc("/get-records", loggerHandler.GetLogRecords)
+	http.HandleFunc("/get-record", loggerHandler.GetLogRecordsById)
+	http.HandleFunc("/get-records-by-level", loggerHandler.GetLogRecordsByLevel)
 
 	log.Println("Starting server on :8080...")
 	err = http.ListenAndServe(":8080", nil)
