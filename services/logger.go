@@ -3,6 +3,7 @@ package services
 import (
 	"MohamedAbdelrazeq/go-logging/db"
 	"MohamedAbdelrazeq/go-logging/models"
+	"errors"
 )
 
 type Logger interface {
@@ -50,15 +51,18 @@ func (service loggerService) GetLogRecords() ([]models.LogRecord, error) {
 func (service loggerService) GetLogRecordsById(id int) (models.LogRecord, error) {
 	row, err := service.db.Query("SELECT id, level, message, timestamp FROM log_records WHERE id = ?", id)
 	if err != nil {
-		return models.LogRecord{}, err
+		return models.LogRecord{}, errors.New("record not found")
 	}
 
 	var logRecord models.LogRecord
-	err = row.Scan(&logRecord.ID, &logRecord.Level, &logRecord.Message)
-	if err != nil {
-		return models.LogRecord{}, err
+	if row.Next() {
+		err = row.Scan(&logRecord.ID, &logRecord.Level, &logRecord.Message, &logRecord.Timestamp)
+		if err != nil {
+			return models.LogRecord{}, errors.New("record not found")
+		}
+		return logRecord, nil
 	}
-	return logRecord, nil
+	return models.LogRecord{}, errors.New("record not found")
 }
 
 func (service loggerService) GetLogRecordsByLevel(level string) ([]models.LogRecord, error) {

@@ -101,12 +101,10 @@ func (handler loggerHandler) GetLogRecordsById(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Invalid log record ID", http.StatusBadRequest)
 		return
 	}
-
 	// get the log record by ID from db
 	record, err := handler.service.GetLogRecordsById(id)
 	if err != nil {
-		log.Println("Unable to get log record: ", err)
-		http.Error(w, "Unable to get log record", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
