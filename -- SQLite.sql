@@ -1,0 +1,7 @@
+-- SQLite
+CREATE TABLE log_records (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    level TEXT NOT NULL,
+    message TEXT NOT NULL
+);

@@ -2,14 +2,26 @@ package handlers
 
 import (
 	"MohamedAbdelrazeq/go-logging/models"
+	"MohamedAbdelrazeq/go-logging/services"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
-	"os"
 )
 
-func CreateLogRecord(w http.ResponseWriter, r *http.Request) {
+type Logger interface {
+	CreateLogRecord(w http.ResponseWriter, r *http.Request)
+}
+
+type loggerHandler struct {
+	service services.Logger
+}
+
+func NewLoggerHandler(service services.Logger) Logger {
+	return loggerHandler{service}
+}
+
+func (handler loggerHandler) CreateLogRecord(w http.ResponseWriter, r *http.Request) {
 	// only allow POST requests
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -33,22 +45,13 @@ func CreateLogRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create a log record into db
-	file, err := os.OpenFile("log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	record, err = handler.service.CreateLogRecord(record)
 	if err != nil {
-		http.Error(w, "Unable to open log file", http.StatusInternalServerError)
-		return
-	}
-	defer file.Close()
-
-	if _, err := file.Write([]byte(record.Message + " " + record.Timestamp.GoString())); err != nil {
-		http.Error(w, "Unable to write log record to file", http.StatusInternalServerError)
+		log.Println("Unable to create log record: ", err)
+		http.Error(w, "Unable to create log record", http.StatusInternalServerError)
 		return
 	}
 
-	if _, err := file.WriteString("\n"); err != nil {
-		http.Error(w, "Unable to write newline to file", http.StatusInternalServerError)
-		return
-	}
 	// return the log record
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
