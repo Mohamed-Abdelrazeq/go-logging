@@ -2,6 +2,19 @@
 This project is a logging service written in Go. It provides an API to create and retrieve log records stored in an SQLite database.
 
 ## Project Structure
+```plaintext
+/go-logging
+├── db
+│   └── db.go
+├── handlers
+│   └── logger.go
+├── models
+│   └── record.go
+├── services
+│   └── logger.go
+├── main.go
+└── schema.sql
+```
 
 ## Getting Started
 
