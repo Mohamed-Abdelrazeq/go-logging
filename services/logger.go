@@ -23,10 +23,15 @@ func NewLoggerService(db db.Database) Logger {
 }
 
 func (service loggerService) CreateLogRecord(logRecord models.LogRecord) (models.LogRecord, error) {
-	_, err := service.db.Exec("INSERT INTO log_records (level, message, timestamp) VALUES (?, ?, ?)", logRecord.Level, logRecord.Message, logRecord.Timestamp)
+	results, err := service.db.Exec("INSERT INTO log_records (level, message, timestamp) VALUES (?, ?, ?)", logRecord.Level, logRecord.Message, logRecord.Timestamp)
 	if err != nil {
 		return models.LogRecord{}, err
 	}
+	tempId, err := results.LastInsertId()
+	if err != nil {
+		return models.LogRecord{}, err
+	}
+	logRecord.ID = int(tempId)
 	return logRecord, nil
 }
 
