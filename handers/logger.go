@@ -3,6 +3,7 @@ package handlers
 import (
 	"MohamedAbdelrazeq/go-logging/models"
 	"MohamedAbdelrazeq/go-logging/services"
+	"bytes"
 	"encoding/json"
 	"io"
 	"log"
@@ -41,11 +42,14 @@ func (handler loggerHandler) CreateLogRecord(w http.ResponseWriter, r *http.Requ
 	}
 	defer r.Body.Close()
 
+	// replace \n with \\n
+	body = bytes.ReplaceAll(body, []byte("\n"), []byte(""))
+	body = bytes.ReplaceAll(body, []byte("\r"), []byte(""))
+
 	// validate the request body complies with the record struct
 	var record models.LogRecord
 	if err := json.Unmarshal(body, &record); err != nil {
-		log.Println("Unable to open log fil: ", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
