@@ -71,7 +71,7 @@ The server will start on [http://localhost:8080](http://localhost:8080).
 
     ```json
     {
-        "level": "INFO",
+        "level": 1,
         "message": "This is a log message",
         "timestamp": "2023-10-01T12:00:00Z"
     }
