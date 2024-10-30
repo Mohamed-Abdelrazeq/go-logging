@@ -1,107 +1,111 @@
-# Logging Service
+# Go Logging Service
+This project is a logging service written in Go. It provides an API to create and retrieve log records stored in an SQLite database.
 
-This is the README file for the Logging Service. This service provides endpoints to log and retrieve log messages.
+## Project Structure
 
-## Endpoints
+## Getting Started
 
-### 1. Create Log Entry
+### Prerequisites
 
-- **URL:** `/logs`
-- **Method:** `POST`
-- The record has 3 levels:
-    - **Level 1:** Info
-    - **Level 2:** Warning
-    - **Level 3:** Errors
-- **Request Body:**
-    ```json
-    {
-        "level": 1,
-        "message": "This is a log message",
-        "timestamp": 2023-10-01T12:00:00Z
-    }
+- Go 1.16 or later
+- SQLite3
+
+### Installation
+
+1. Clone the repository:
+
+    ```sh
+    git clone https://github.com/MohamedAbdelrazeq/go-logging.git
+    cd go-logging
     ```
-- **Response:**
-    - `201 Created` on success
-    - `400 Bad Request` if the request is invalid
 
-### 2. Retrieve Log Entries
+2. Install dependencies:
 
-- **URL:** `/logs`
-- **Method:** `GET`
-- **Description:** Retrieve all log entries.
-- **Response:**
-    ```json
-    [
-        {
-            "id": "1",
-            "level": 1,
-            "message": "This is a log message",
-            "timestamp": 2023-10-01T12:00:00Z
-        },
-        ...
-    ]
+    ```sh
+    go mod download
     ```
-- **Response Codes:**
-    - `200 OK` on success
 
-### 3. Retrieve Log Entry by ID
+3. Create the SQLite database:
 
-- **URL:** `/logs/{id}`
-- **Method:** `GET`
-- **Description:** Retrieve a log entry by its ID.
-- **Response:**
-    ```json
-    {
-        "id": "1",
-        "level": 1,
-        "message": "This is a log message",
-        "timestamp": 2023-10-01T12:00:00Z
-    }
+    ```sh
+    sqlite3 logger-db.sqlite < schema.sql
     ```
-- **Response Codes:**
-    - `200 OK` on success
-    - `404 Not Found` if the log entry does not exist
 
-### 4. Retrieve Log Entries by Time Range
+### Running the Application
 
-- **URL:** `/logs?start={start}&end={end}`
-- **Method:** `GET`
-- **Description:** Retrieve log entries within a specified time range.
-- **Query Parameters:**
-    - `start`: Start timestamp (ISO 8601 format)
-    - `end`: End timestamp (ISO 8601 format)
-- **Response:**
-    ```json
-    [
-        {
-            "id": "1",
-            "level": 1,
-            "message": "This is a log message",
-            "timestamp": 2023-10-01T12:00:00Z
-        },
-        ...
-    ]
-    ```
-- **Response Codes:**
-    - `200 OK` on success
-    - `400 Bad Request` if the query parameters are invalid
-
-### 5. Delete Log Entry
-
-- **URL:** `/logs/{id}`
-- **Method:** `DELETE`
-- **Description:** Delete a log entry by its ID.
-- **Response Codes:**
-    - `204 No Content` on success
-    - `404 Not Found` if the log entry does not exist
-
-## Running the Service
-
-To run the logging service, use the following command:
+To start the application, run:
 
 ```sh
 go run main.go
 ```
+
+The server will start on [http://localhost:8080](http://localhost:8080).
+
+## API Endpoints
+
+### Health Check
+
+- **URL:** `/health`
+- **Method:** `GET`
+- **Description:** Check the health of the service.
+
+### Create Log Record
+
+- **URL:** `/create-record`
+- **Method:** `POST`
+- **Description:** Create a new log record.
+- **Request Body:**
+
+    ```json
+    {
+        "level": "INFO",
+        "message": "This is a log message",
+        "timestamp": "2023-10-01T12:00:00Z"
+    }
+    ```
+
+### Get Log Records
+
+- **URL:** `/get-records`
+- **Method:** `GET`
+- **Description:** Retrieve log records with pagination.
+- **Query Parameters:**
+  - `page` (optional): Page number (default is 0).
+
+### Get Log Record by ID
+
+- **URL:** `/get-record`
+- **Method:** `GET`
+- **Description:** Retrieve a log record by its ID.
+- **Query Parameters:**
+  - `id`: Log record ID.
+
+### Get Log Records by Level
+
+- **URL:** `/get-records-by-level`
+- **Method:** `GET`
+- **Description:** Retrieve log records by log level with pagination.
+- **Query Parameters:**
+  - `level`: Log level (e.g., INFO, ERROR).
+  - `page` (optional): Page number (default is 0).
+
+### Get Log Records by Date Range
+
+- **URL:** `/get-records-by-date-range`
+- **Method:** `GET`
+- **Description:** Retrieve log records within a specific date range.
+- **Query Parameters:**
+  - `startDate`: Start date (e.g., 2023-10-01).
+  - `endDate`: End date (e.g., 2023-10-31).
+
+## Project Files
+
+- `main.go`: Entry point of the application.
+- `db/db.go`: Database connection and operations.
+- `services/logger.go`: Logger service for creating and retrieving log records.
+- `handlers/logger.go`: HTTP handlers for the logging API.
+- `models/record.go`: Log record model.
+- `schema.sql`: SQL schema for creating the log records table.
 
 ## License
 
