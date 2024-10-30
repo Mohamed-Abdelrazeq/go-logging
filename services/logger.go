@@ -8,9 +8,9 @@ import (
 
 type Logger interface {
 	CreateLogRecord(logRecord models.LogRecord) (models.LogRecord, error)
-	GetLogRecords() ([]models.LogRecord, error)
+	GetLogRecords(page int) ([]models.LogRecord, error)
 	GetLogRecordsById(id int) (models.LogRecord, error)
-	GetLogRecordsByLevel(level string) ([]models.LogRecord, error)
+	GetLogRecordsByLevel(level string, page int) ([]models.LogRecord, error)
 	GetLogRecordsByDateRange(startDate string, endDate string) ([]models.LogRecord, error)
 }
 
@@ -35,8 +35,8 @@ func (service loggerService) CreateLogRecord(logRecord models.LogRecord) (models
 	return logRecord, nil
 }
 
-func (service loggerService) GetLogRecords() ([]models.LogRecord, error) {
-	rows, err := service.db.Query("SELECT id, level, message, timestamp FROM log_records")
+func (service loggerService) GetLogRecords(page int) ([]models.LogRecord, error) {
+	rows, err := service.db.Query("SELECT id, level, message, timestamp FROM log_records LIMIT 10 OFFSET ?", page*10)
 	if err != nil {
 		return nil, err
 	}
@@ -71,8 +71,8 @@ func (service loggerService) GetLogRecordsById(id int) (models.LogRecord, error)
 	return models.LogRecord{}, errors.New("record not found")
 }
 
-func (service loggerService) GetLogRecordsByLevel(level string) ([]models.LogRecord, error) {
-	rows, err := service.db.Query("SELECT id, level, message, timestamp FROM log_records WHERE level = ?", level)
+func (service loggerService) GetLogRecordsByLevel(level string, page int) ([]models.LogRecord, error) {
+	rows, err := service.db.Query("SELECT id, level, message, timestamp FROM log_records WHERE level = ? LIMIT 10 OFFSET ?", level, page*10)
 	if err != nil {
 		return nil, err
 	}

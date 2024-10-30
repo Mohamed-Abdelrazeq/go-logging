@@ -74,8 +74,21 @@ func (handler loggerHandler) GetLogRecords(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// get the page from the URL
+	pageStr := r.URL.Query().Get("page")
+	if pageStr == "" {
+		pageStr = "0"
+	}
+
+	// convert the page to an integer
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		http.Error(w, "Invalid page number", http.StatusBadRequest)
+		return
+	}
+
 	// get the log records from db
-	records, err := handler.service.GetLogRecords()
+	records, err := handler.service.GetLogRecords(page)
 	if err != nil {
 		log.Println("Unable to get log records: ", err)
 		http.Error(w, "Unable to get log records", http.StatusInternalServerError)
@@ -106,6 +119,7 @@ func (handler loggerHandler) GetLogRecordsById(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Invalid log record ID", http.StatusBadRequest)
 		return
 	}
+
 	// get the log record by ID from db
 	record, err := handler.service.GetLogRecordsById(id)
 	if err != nil {
@@ -133,8 +147,21 @@ func (handler loggerHandler) GetLogRecordsByLevel(w http.ResponseWriter, r *http
 		return
 	}
 
+	// get the page from the URL
+	pageStr := r.URL.Query().Get("page")
+	if pageStr == "" {
+		pageStr = "0"
+	}
+
+	// convert the page to an integer
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		http.Error(w, "Invalid page number", http.StatusBadRequest)
+		return
+	}
+
 	// get the log records by level from db
-	records, err := handler.service.GetLogRecordsByLevel(level)
+	records, err := handler.service.GetLogRecordsByLevel(level, page)
 	if err != nil {
 		log.Println("Unable to get log records: ", err)
 		http.Error(w, "Unable to get log records", http.StatusInternalServerError)
