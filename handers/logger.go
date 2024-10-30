@@ -15,6 +15,7 @@ type Logger interface {
 	GetLogRecords(w http.ResponseWriter, r *http.Request)
 	GetLogRecordsById(w http.ResponseWriter, r *http.Request)
 	GetLogRecordsByLevel(w http.ResponseWriter, r *http.Request)
+	GetLogRecordsByDateRange(w http.ResponseWriter, r *http.Request)
 }
 
 type loggerHandler struct {
@@ -130,6 +131,39 @@ func (handler loggerHandler) GetLogRecordsByLevel(w http.ResponseWriter, r *http
 
 	// get the log records by level from db
 	records, err := handler.service.GetLogRecordsByLevel(level)
+	if err != nil {
+		log.Println("Unable to get log records: ", err)
+		http.Error(w, "Unable to get log records", http.StatusInternalServerError)
+		return
+	}
+
+	// return the log records
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(records)
+}
+
+func (handler loggerHandler) GetLogRecordsByDateRange(w http.ResponseWriter, r *http.Request) {
+	// only allow GET requests
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// get the log record date range from the URL
+	startDate := r.URL.Query().Get("start_date")
+	if startDate == "" {
+		http.Error(w, "Missing log record start date", http.StatusBadRequest)
+		return
+	}
+	endDate := r.URL.Query().Get("end_date")
+	if endDate == "" {
+		http.Error(w, "Missing log record end date", http.StatusBadRequest)
+		return
+	}
+
+	// get the log records by date range from db
+	records, err := handler.service.GetLogRecordsByDateRange(startDate, endDate)
 	if err != nil {
 		log.Println("Unable to get log records: ", err)
 		http.Error(w, "Unable to get log records", http.StatusInternalServerError)
