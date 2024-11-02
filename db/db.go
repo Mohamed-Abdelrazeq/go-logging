@@ -3,11 +3,12 @@ package db
 import (
 	"database/sql"
 
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Database interface {
-	Connect(connectionString string) error
+	Connect(driver string, connectionString string) error
 	Close() error
 	Query(query string, args ...interface{}) (Rows, error)
 	Exec(query string, args ...interface{}) (Result, error)
@@ -28,9 +29,9 @@ type DB struct {
 	db *sql.DB
 }
 
-func (s *DB) Connect(connectionString string) error {
+func (s *DB) Connect(driver string, connectionString string) error {
 	var err error
-	s.db, err = sql.Open("sqlite3", connectionString)
+	s.db, err = sql.Open("postgres", connectionString)
 	if err != nil {
 		return err
 	}
@@ -85,9 +86,9 @@ func (r *SQLiteResult) RowsAffected() (int64, error) {
 	return r.result.RowsAffected()
 }
 
-func CreateAndConnectDB(connectionString string) (Database, error) {
+func CreateAndConnectDB(driver string, connectionString string) (Database, error) {
 	db := &DB{}
-	err := db.Connect(connectionString)
+	err := db.Connect(driver, connectionString)
 	if err != nil {
 		return nil, err
 	}

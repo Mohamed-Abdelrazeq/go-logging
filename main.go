@@ -6,13 +6,24 @@ import (
 	"MohamedAbdelrazeq/go-logging/services"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
+	// init env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// init db
-	connectionString := "file:logger-db.sqlite?cache=shared&mode=rwc"
-	db, err := db.CreateAndConnectDB(connectionString)
+	connectionString := os.Getenv("DB_CONNECTION")
+	driver := os.Getenv("DRIVER")
+	log.Println("Connecting to database: ", connectionString)
+	db, err := db.CreateAndConnectDB(driver, connectionString)
 	if err != nil {
 		log.Fatal("Error connecting to database: ", err)
 	}
