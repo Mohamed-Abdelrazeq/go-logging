@@ -1,0 +1,270 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple logging service API.",
+    "version": "1.0.0",
+    "title": "Logging Service API"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Check the health of the service.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/create-record": {
+      "post": {
+        "summary": "Create Log Record",
+        "description": "Create a new log record.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Log record details",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LogRecord"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log record created",
+            "schema": {
+              "$ref": "#/definitions/LogRecord"
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "500": {
+            "description": "Unable to create log record"
+          }
+        }
+      }
+    },
+    "/get-records": {
+      "get": {
+        "summary": "Get Log Records",
+        "description": "Retrieve log records with pagination.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "type": "integer",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of log records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogRecord"
+              }
+            }
+          },
+          "500": {
+            "description": "Unable to retrieve log records"
+          }
+        }
+      }
+    },
+    "/get-record": {
+      "get": {
+        "summary": "Get Log Record by ID",
+        "description": "Retrieve a log record by its ID.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "description": "Log record ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log record details",
+            "schema": {
+              "$ref": "#/definitions/LogRecord"
+            }
+          },
+          "400": {
+            "description": "Invalid log record ID"
+          },
+          "500": {
+            "description": "Unable to retrieve log record"
+          }
+        }
+      }
+    },
+    "/get-records-by-level": {
+      "get": {
+        "summary": "Get Log Records by Level",
+        "description": "Retrieve log records by log level with pagination.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "level",
+            "description": "Log level (e.g., INFO, ERROR)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "type": "integer",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of log records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogRecord"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid log level"
+          },
+          "500": {
+            "description": "Unable to retrieve log records"
+          }
+        }
+      }
+    },
+    "/get-records-by-date-range": {
+      "get": {
+        "summary": "Get Log Records by Date Range",
+        "description": "Retrieve log records within a specific date range.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "description": "Start date (e.g., 2023-10-01)",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "description": "End date (e.g., 2023-10-31)",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "type": "integer",
+            "default": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of log records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogRecord"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid date range"
+          },
+          "500": {
+            "description": "Unable to retrieve log records"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LogRecord": {
+      "type": "object",
+      "required": [
+        "level",
+        "message",
+        "timestamp"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "level": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
